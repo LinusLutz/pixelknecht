@@ -109,6 +109,43 @@ function submitModeConfig() {
 }
 
 window.onload = function () {
+  loadImages;
   loadData(Endpoint.MODE_API_URL);
   loadData(Endpoint.SERVER_API_URL);
 };
+async function loadImages() {
+        try {
+          const response = await fetch("/listFiles");
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          const imageList = document.getElementById("imageList");
+          imageList.innerHTML = ""; // Clear existing images
+
+          // Create a list item for each file
+          const ul = document.createElement("ul");
+          data.files.forEach(file => {
+            const li = document.createElement("li");
+            li.innerHTML = `<input type="radio" name="selectedImage" value="${file}" onchange="fillImageUrl('${file}')"> ${file}`;
+            ul.appendChild(li);
+          });
+
+          imageList.appendChild(ul);
+        } catch (error) {
+          console.error("Error loading images:", error);
+        }
+      }
+function fillImageUrl(fileName) {
+        const imageUrlInput = document.getElementById("imageUrl");
+        // Assuming the images are served from a specific URL structure
+        imageUrlInput.value = `/pictures/${fileName}`; // Adjust the path as necessary
+      }
+function toggleImageList() {
+        const imageList = document.getElementById("imageList");
+        if (imageList.style.display === "none") {
+            imageList.style.display = "block"; // Show the image list
+        } else {
+            imageList.style.display = "none"; // Hide the image list
+      }
+}
